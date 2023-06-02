@@ -1,4 +1,4 @@
-# Arxiv Slack Notice
+# Arxiv Slack Notification
 
 指定したキーワードで検索した最新論文を，Abstを和訳して毎日Slackに通知するスクリプト．
 
