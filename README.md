@@ -2,6 +2,8 @@
 
 指定したキーワードで検索した最新論文を，Abstを和訳して毎日Slackに通知するスクリプト．
 
+![example](assets/example.png)
+
 ## Require
 
 - Docker, Docker Compose
