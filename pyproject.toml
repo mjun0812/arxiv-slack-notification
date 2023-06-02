@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "arxiv-slack-notification"
+version = "0.1.0"
+description = ""
+authors = ["Junya Morioka <mjun@mjunya.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+deepl = "^1.14.0"
+feedparser = "^6.0.10"
+python-dotenv = "^1.0.0"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+isort = "^5.12.0"
+flake8 = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

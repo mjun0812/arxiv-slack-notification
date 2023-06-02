@@ -1,0 +1,13 @@
+{
+    "translators": [
+        "DeepL",
+        "Google"
+    ],
+    "keywords": [
+        {
+            "keyword": "Transformer",
+            "category": "cs.CV",
+            "max_results": 20
+        }
+    ]
+}
