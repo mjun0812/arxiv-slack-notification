@@ -5,7 +5,7 @@
 ## Require
 
 - Docker, Docker Compose
-- DeelL or Google Cloud Translate APIのAPI Key
+- DeepL or Google Cloud Translate APIのAPI Key
 - SlackのWebhook URL
 
 ## Install
