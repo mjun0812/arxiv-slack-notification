@@ -123,9 +123,11 @@ def main():
             message = (
                 f"【タイトル】: {paper['title']}\n"
                 # f"【著者】: {paper['authors']}\n"
+                f"【Keyword】: {key}\n"
                 f"【URL】: {paper['url']}\n"
                 f"【Date】{paper['date']}\n"
                 f"【Abst】: {abst}\n"
+                f"【Abst_en】: {paper['summary']}\n"
             )
             post_slack(
                 channel="#paper",
