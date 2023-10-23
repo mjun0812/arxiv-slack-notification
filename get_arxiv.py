@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 from pprint import pformat
@@ -57,6 +58,7 @@ def post_slack(channel="#通知", username="通知", message=""):
 
 
 def main():
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     os.makedirs("./.cache", exist_ok=True)
 
     with open("config.json") as f:
@@ -126,6 +128,7 @@ def main():
                 f"【Keyword】: {key}\n"
                 f"【URL】: {paper['url']}\n"
                 f"【Date】{paper['date']}\n"
+                f"【Fetch Date】{now}\n"
                 f"【Abst】: {abst}\n"
                 f"【Abst_en】: {paper['summary']}\n"
             )
