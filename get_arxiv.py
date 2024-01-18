@@ -74,56 +74,43 @@ def main():
     results = {}
     for query in config["keywords"]:
         key = query["keyword"].lower().replace(" ", "_")
-        results[key] = get_arxiv(
+        result = get_arxiv(
             keyword=f"%22{query['keyword']}%22",
             category=query["category"],
             max_results=query["max_results"],
         )
-
-    for key, result in results.items():
         if result["status"] != 200:
             continue
 
         # Check cache
         if os.path.exists(f"./.cache/{key}.json"):
             with open(f"./.cache/{key}.json") as f:
-                cache_json = json.load(f)
-            cache_title_list = [paper["title"] for paper in cache_json]
+                cache = json.load(f)
+            cache_title_list = [paper["title"] for paper in cache]
         else:
+            cache = []
             cache_title_list = []
 
         # parse
-        paper_list = []
-        new_paper_list = []
+        num_new_paper = 0
         for res in result["entries"]:
             paper = {
                 "title": res["title"].replace("\n", ""),
-                "summary": "".join(res["summary"].replace("\n", "")),
+                "abstruct": "".join(res["summary"].replace("\n", "")),
                 # "authors": ", ".join([author["name"] for author in res["authors"]]),
                 "url": res["link"],
                 "date": res["published"],
             }
-            paper_list.append(paper)
-            if paper["title"] not in cache_title_list:
-                new_paper_list.append(paper)
+            if paper["title"] in cache_title_list:
+                continue
+            num_new_paper += 1
 
-        results[key] = new_paper_list
-
-        with open(f"./.cache/{key}.json", "w") as f:
-            json.dump(paper_list, f, indent=2)
-
-        if len(new_paper_list) == 0:
-            continue
-
-        for paper in new_paper_list:
             abst = ""
             for translator_name in config["translators"]:
-                translated_abst = translators[translator_name](paper["summary"])
+                translated_abst = translators[translator_name](paper["abstruct"])
                 if translated_abst:
                     abst = f"{translated_abst}\nTranslate by {translator_name}"
                     break
-            if not abst:
-                abst = paper["summary"]
 
             post_slack(
                 channel="#paper",
@@ -136,13 +123,15 @@ def main():
                     f"【Date】{paper['date']}\n"
                     f"【Fetch Date】{now}\n"
                     f"【Abst】: {abst}\n"
-                    f"【Abst_en】: {paper['summary']}\n"
+                    f"【Abst_en】: {paper['abstruct']}\n"
                 ),
             )
 
+        with open(f"./.cache/{key}.json", "w") as f:
+            json.dump(cache, f, indent=2)
+        results[key] = num_new_paper
+
     # Send All Result
-    for key, value in results.items():
-        results[key] = len(value)
     post_slack(
         channel="#paper",
         username="Paper Stats",
