@@ -59,7 +59,6 @@ def post_slack(channel="#通知", username="通知", message=""):
 
 def main():
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    os.makedirs("./.cache", exist_ok=True)
 
     with open("config.json") as f:
         config = json.load(f)
@@ -71,6 +70,17 @@ def main():
         "None": lambda x: x,
     }
 
+    # Check cache
+    os.makedirs("./.cache", exist_ok=True)
+    cache_path = "./cache/papers.json"
+    if os.path.exists(cache_path):
+        with open(cache_path) as f:
+            cache = json.load(f)
+        cache_title_list = [paper["title"] for paper in cache]
+    else:
+        cache = []
+        cache_title_list = []
+
     results = {}
     for query in config["keywords"]:
         key = query["keyword"].lower().replace(" ", "_")
@@ -81,15 +91,6 @@ def main():
         )
         if result["status"] != 200:
             continue
-
-        # Check cache
-        if os.path.exists(f"./.cache/{key}.json"):
-            with open(f"./.cache/{key}.json") as f:
-                cache = json.load(f)
-            cache_title_list = [paper["title"] for paper in cache]
-        else:
-            cache = []
-            cache_title_list = []
 
         # parse
         num_new_paper = 0
@@ -103,7 +104,6 @@ def main():
             }
             if paper["title"] in cache_title_list:
                 continue
-            num_new_paper += 1
 
             abst = ""
             for translator_name in config["translators"]:
@@ -127,10 +127,14 @@ def main():
                 ),
             )
 
-        with open(f"./.cache/{key}.json", "w") as f:
-            json.dump(cache, f, indent=2)
+            cache.append(paper)
+            cache_title_list.append(paper["title"])
+            num_new_paper += 1
+
         results[key] = num_new_paper
 
+    with open(cache_path, "w") as f:
+        json.dump(cache, f, indent=2)
     # Send All Result
     post_slack(
         channel="#paper",
