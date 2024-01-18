@@ -112,6 +112,9 @@ def main():
         with open(f"./.cache/{key}.json", "w") as f:
             json.dump(paper_list, f, indent=2)
 
+        if len(new_paper_list) == 0:
+            continue
+
         for paper in new_paper_list:
             abst = ""
             for translator_name in config["translators"]:
@@ -122,20 +125,19 @@ def main():
             if not abst:
                 abst = paper["summary"]
 
-            message = (
-                f"【タイトル】: {paper['title']}\n"
-                # f"【著者】: {paper['authors']}\n"
-                f"【Keyword】: {key}\n"
-                f"【URL】: {paper['url']}\n"
-                f"【Date】{paper['date']}\n"
-                f"【Fetch Date】{now}\n"
-                f"【Abst】: {abst}\n"
-                f"【Abst_en】: {paper['summary']}\n"
-            )
             post_slack(
                 channel="#paper",
                 username=key,
-                message=message,
+                message=(
+                    f"【タイトル】: {paper['title']}\n"
+                    # f"【著者】: {paper['authors']}\n"
+                    f"【Keyword】: {key}\n"
+                    f"【URL】: {paper['url']}\n"
+                    f"【Date】{paper['date']}\n"
+                    f"【Fetch Date】{now}\n"
+                    f"【Abst】: {abst}\n"
+                    f"【Abst_en】: {paper['summary']}\n"
+                ),
             )
 
     # Send All Result
