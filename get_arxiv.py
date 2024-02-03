@@ -72,7 +72,7 @@ def main():
 
     # Check cache
     os.makedirs("./.cache", exist_ok=True)
-    cache_path = "./cache/papers.json"
+    cache_path = "./.cache/papers.json"
     if os.path.exists(cache_path):
         with open(cache_path) as f:
             cache = json.load(f)
